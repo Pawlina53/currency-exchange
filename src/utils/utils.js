@@ -13,9 +13,9 @@ export const handleDateFormat = (date, includeTime=true) => {
     const getDay = utcDate.toLocaleString("en-GB", {day: '2-digit'});
     const getTime = utcDate.toTimeString().slice(0,5);
     if(includeTime) {
-        return `${getYear}-${getMonth}-${getDay}`;
+        return `${getYear}-${getMonth}-${getDay}-${getTime}`;
     }
-    return `${getYear}-${getMonth}-${getDay}-${getTime}`;
+    return `${getYear}-${getMonth}-${getDay}`;
 }
 
 export const get15MinutesDataset = async (currencies) => {

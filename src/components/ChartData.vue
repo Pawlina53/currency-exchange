@@ -27,13 +27,13 @@ export default {
     },
     methods: {
         async handleChartDataSet(duration) {
-            this.durationDisabled = true;
             //disable buttons until animation is ready
+            this.durationDisabled = true;
             if(this.chart) this.chart.destroy();
+            this.chart = null;
             this.durations.includes(duration) && (this.durationSelected = duration);
             const {labels, points} = await this.generateDataset();
-
-            if(this.currency && !this.chart && labels && points){
+            if(this.currency && !this.chart){
                 this.chart = new Chart(document.getElementById("line-chart"), {
                     type: 'line',
                     data: {
@@ -83,7 +83,6 @@ export default {
                     }
                 });    
             }
-            
         },
         async generateDataset() {
             //make api call here to fetch data
@@ -96,35 +95,35 @@ export default {
                     await get15MinutesDataset(this.currency)
                         .then((data) => {
                             dataSet = data.data.quotes
-                            console.log("**DATA HERE 15 MINUTES", dataSet)
+                            console.log("Chart Data for 15 minutes: ", dataSet)
                         })
                 }
                 if(this.durationSelected === '1H'){
                     await getHourDataset(this.currency)
                         .then((data) => {
                             dataSet = data.data.quotes
-                            console.log("**DATA HERE HOURLY", dataSet)
+                            console.log("Chart Data for 1 hour: ", dataSet)
                         })
                 }
                 if(this.durationSelected === '1D'){
                     await getDayDataset(this.currency)
                         .then((data) => {
                             dataSet = data.data.quotes
-                            console.log("**DATA HERE DAILY", dataSet)
+                            console.log("Chart Data for 1 day: ", dataSet)
                         })
                 }
                 if(this.durationSelected === '1W'){
                     await getWeekDataset(this.currency)
                         .then((data) => {
                             dataSet = data.data.quotes
-                            console.log("**DATA HERE WEEKLY", dataSet)
+                            console.log("Chart Data for 1 week: ", dataSet)
                         })
                 }
                 if(this.durationSelected === '1M'){
                     await getMonthDataset(this.currency)
                         .then((data) => {
                             dataSet = data.data.quotes
-                            console.log("**DATA HERE MONTHLY", dataSet)
+                            console.log("Chart Data for 1 month: ", dataSet)
                         })
                 }
             }
