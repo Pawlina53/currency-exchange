@@ -87,7 +87,7 @@ export default {
         this.currencyDif = (this.currentCurrencyValue - this.average).toFixed(6);
         this.isCurrencyDifNegative = this.currencyDif > 0 ? false : true;
         const value = ((100 * this.currencyDif) / this.currentCurrencyValue).toFixed(6);
-        this.currencyDifPercentage = Math.abs(value) === Infinity ? 0 : value
+        this.currencyDifPercentage = (Math.abs(value) === Infinity || isNaN(Math.abs(value))) ? 0 : value
       }
     }
   }
@@ -218,12 +218,12 @@ export default {
   border-top: 4px dashed;
   border-right: 4px solid transparent;
   border-left: 4px solid transparent;
-  color: green;
+  color: #27cd68;
   rotate: 180deg;
 
     &.negative{
       rotate: 0deg;
-      color: red;
+      color: #f33c32;
     }
 }
 
@@ -275,10 +275,10 @@ export default {
   display: flex;
   justify-content: flex-end;
   font-weight: 700;
-  color: green;
+  color: #27cd68;
 
     &.negative{
-      color: red;
+      color: #f33c32;
     }
 }
 
