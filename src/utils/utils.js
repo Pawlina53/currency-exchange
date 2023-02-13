@@ -1,7 +1,7 @@
 import axios from "axios";
 
-export const API_KEY = '-_Sr1PfxLmxtJp1oVsDV';
-export const USER_KEY = 'ws7mKbYip3KnPk_OLg2A';
+export const API_KEY = 'FYZItEJinwCnDCwgu4rc';
+export const STREAM_KEY = 'wslgcsyZ6C7TY9mvacAQ';
 
 export const handleDateFormat = (date, includeTime=true) => {
     //calculate UTC timezone
@@ -86,6 +86,17 @@ export const getMonthDataset = async (currencies) => {
 export const convertCurrencies = async (currencyFrom, currencyTo) => {
     let data = null;
     await axios.get(`https://marketdata.tradermade.com/api/v1/convert?api_key=${API_KEY}&from=${currencyFrom}&to=${currencyTo}&amount=1`)
+        .then((response) => {
+            data = response;
+        }).catch((error) => {
+            console.error("ERROR: ", error);
+        })
+    return data;
+}
+
+export const getCurrentCurrencies = async () => {
+    let data = null;
+    await axios.get(`https://marketdata.tradermade.com/api/v1/live_currencies_list?api_key=${API_KEY}`)
         .then((response) => {
             data = response;
         }).catch((error) => {

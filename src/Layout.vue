@@ -1,13 +1,11 @@
 <script>
 import DropDown from './components/DropDown.vue';
-import axios from 'axios';
-import response from './dummyData.json';
 import ChartData from './components/ChartData.vue';
 import 'currency-flags/dist/currency-flags.css';
-import { convertCurrencies } from './utils/utils';
+import { getCurrentCurrencies } from './utils/utils';
 import WebsocketManager from './components/WebsocketManager.vue';
 import AnimateNumber from './components/AnimateNumber.vue';
-import CurrencyBadge from "vue-currency-symbol";
+import currencySymbols from "vue-currency-symbol/src/countries.json";
 import ThemeMode from './components/ThemeMode.vue';
 
 export default {
@@ -23,7 +21,8 @@ export default {
       currencyDif: 0,
       currencyDifPercentage: 0,
       isCurrencyDifNegative: false,
-      average: 0
+      average: 0,
+      currencySymbol: ''
     }
   },
   components: {
@@ -33,14 +32,9 @@ export default {
     "AnimateNumber": AnimateNumber,
     "ThemeMode": ThemeMode
 },
-  mounted() {
-      // axios.get('https://marketdata.tradermade.com/api/v1/live_currencies_list?api_key=-_Sr1PfxLmxtJp1oVsDV')
-      // .then(response => {
-      //     this.object = response.data.available_currencies[0];
-      //     this.currencyArrayOne = response.data.available_currencies;
-          //response.data.available_currencies[0]);
-      // })
-    const listOfCurrencies = Object.entries(response[0].CURRENCIES.data.available_currencies);
+  async mounted() {
+    const data = await getCurrentCurrencies()
+    const listOfCurrencies = Object.entries(data.data.available_currencies);
     
     listOfCurrencies.forEach((currency) => {
       let currencyDetail = {
@@ -53,7 +47,7 @@ export default {
     this.currencyArrayTwo = this.originalArray;
     
     this.comparedCurrences = `${this.currencyOneValue.code}${this.currencyTwoValue.code}`;
-    this.updateCurrencyOptions();
+    this.updateCurrencyList();
   },
   methods: {
     updateCurrencyValue(currencyValue) {
@@ -63,19 +57,23 @@ export default {
     selectFirstCurrency(payload) {
       this.currencyOneValue = payload;
       this.comparedCurrences = `${this.currencyOneValue.code}${this.currencyTwoValue.code}`
-      this.updateCurrencyOptions();
+      this.updateCurrencyList();
     },
     selectSecondCurrency(payload) {
       this.currencyTwoValue = payload;
       this.comparedCurrences = `${this.currencyOneValue.code}${this.currencyTwoValue.code}`
-      this.updateCurrencyOptions();
+      this.updateCurrencyList();
     },
-    updateCurrencyOptions() {
-      let newArray = [...this.originalArray];
-      //if option is selected in first dropdown, remove from the second dropdown
-      newArray = newArray.filter(item => item !== this.currencyTwoValue && item !== this.currencyOneValue);
-      this.currencyArrayOne = newArray;
-      this.currencyArrayTwo = newArray;
+    updateCurrencyList() {
+      if(this.currencyTwoValue && this.currencyOneValue){
+        const selectedCurrency = currencySymbols.filter((curr) => curr.abbreviation === this.currencyTwoValue.code);
+        this.currencySymbol = selectedCurrency[0].symbol;
+        let newArray = [...this.originalArray];
+        //if option is selected in first dropdown, remove from the second dropdown
+        newArray = newArray.filter((item) => (item.currency !== this.currencyTwoValue.currency && item.currency !== this.currencyOneValue.currency));
+        this.currencyArrayOne = newArray;
+        this.currencyArrayTwo = newArray;
+      }
     },
     async updateAverage(totalItems, totalAmount){
       //calculate average,
@@ -85,11 +83,6 @@ export default {
         this.average = totalAmount/totalItems;
       }
       if(this.currencyOneValue && this.currencyTwoValue){
-        // await convertCurrencies(this.currencyOneValue.code, this.currencyTwoValue.code).then((data) => {
-        //   console.log("**DATA", data)
-        //   this.currentCurrencyValue = data.data.quote;
-        // })
-
         //use Math.abs to convert to positive number
         this.currencyDif = (this.currentCurrencyValue - this.average).toFixed(6);
         this.isCurrencyDifNegative = this.currencyDif > 0 ? false : true;
@@ -139,15 +132,18 @@ export default {
         
         <div class="currency-info">
           <h1 class="currency-codes">{{ currencyOneValue?.code }}/{{ currencyTwoValue?.code }}</h1>
-          <span class="currency-value">
-            <AnimateNumber
-              :number="Number(currentCurrencyValue)"
-            />
-          </span>
+          <div class="currency-value">
+            <span v-html="currencySymbol" style="margin-right: 5px;"></span>
+            <span>
+              <AnimateNumber
+                :number="Number(currentCurrencyValue)"
+              />
+            </span>
+          </div>
+          
         </div>
         <span :class="['caret ', {'negative': isCurrencyDifNegative}]"></span>
         <span :class="['currency-percentage ' , {'negative': isCurrencyDifNegative}]">
-          <!-- <span v-html="currencySymbol('EUR')"></span> -->
           <AnimateNumber
             :number="Math.abs(currencyDif)"
           />

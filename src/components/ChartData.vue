@@ -1,7 +1,6 @@
 
 <script>
 import Chart from 'chart.js/auto';
-import response from '../dummyData.json';
 import { get15MinutesDataset, getHourDataset, getDayDataset, getWeekDataset, getMonthDataset } from '../utils/utils';
 
 export default {
@@ -85,10 +84,6 @@ export default {
             }
         },
         async generateDataset() {
-            //make api call here to fetch data
-            //FOR ONE WEEK AND 1 MONTH
-            //https://marketdata.tradermade.com/api/v1/timeseries?currency=EURUSD&api_key=-_Sr1PfxLmxtJp1oVsDV&start_date=2019-10-01&end_date=2019-10-10&format=records
-            // let dataSet = response[0].TIMESERIES_MINUTE_REQUEST.quotes;
             let dataSet = [];
             if(this.currency.length > 0){
                 if(this.durationSelected === '15M'){

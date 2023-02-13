@@ -1,5 +1,5 @@
 <script>
-import { USER_KEY } from '../utils/utils';
+import { STREAM_KEY } from '../utils/utils';
 
 export default {
   data() {
@@ -35,10 +35,8 @@ export default {
         this.connection.onopen = () => {
           console.log("WebSocket connected successfully.")
           this.connected = true;
-          console.log("**KEYY", this.currency, USER_KEY)
           this.connection.send(JSON.stringify({
-            type: 'login',
-            userKey: USER_KEY,
+            userKey: STREAM_KEY,
             symbol: this.currency
           }))
         }

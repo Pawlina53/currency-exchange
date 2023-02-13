@@ -65,8 +65,9 @@ button:hover:not([disabled]) {
   background: var(--active-primary-color);
   font-weight: 800;
 }
-button:hover:disabled {
+button:disabled {
   cursor:auto;
+  color: var(--scrollbar-thumb-hover-color);
 }
 button:focus,
 button:focus-visible {
